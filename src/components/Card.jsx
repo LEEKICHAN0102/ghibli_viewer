@@ -1,41 +1,23 @@
-import { useEffect, useState } from "react"
-import { getAllFilms } from "../api/films";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-
-export default function Card(){
-  const [films, setFilms] = useState([]);
-
-  useEffect(()=>{
-    const fetchData = async () => {
-      try {
-        const result = await getAllFilms();
-        setFilms(result);
-        console.log(result);
-      } catch (error) {
-        console.error("Error fetching films:", error);
-      }
-    };
-
-    fetchData();
-  },[]);
-
+export default function Card({films}){
   return (
-    <Ghibli>
-      {
-        films.map((film) => 
-          <Poster key={film.id}>
-            <Banner src={`${film.image}`} alt="films_image"/>
+    <GhibliCard>
+      {films.map((film) => (
+        <Link key={film.id} to={`/detail/${film.id}`} className="active_link">
+          <Poster>
+            <Banner src={`${film.image}`} alt="films_image" />
             <Name>{film.original_title}</Name>
             <Director>{film.director}</Director>
           </Poster>
-        )
-      }
-    </Ghibli>
+        </Link>
+      ))}
+    </GhibliCard>
   )
 }
 
-const Ghibli = styled.div`
+const GhibliCard = styled.div`
   display: grid;
   grid-template-columns: 3fr 3fr 3fr;
   gap: 30px;

@@ -23,8 +23,6 @@ const Head = styled.nav`
   align-items: center;
   justify-content: space-between;
   border-bottom: 2px solid black;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
 `;
 
 const Logo = styled.img`
