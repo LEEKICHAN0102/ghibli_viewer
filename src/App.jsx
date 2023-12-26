@@ -4,6 +4,7 @@ import Card from './components/Card';
 import Detail from './components/Detail';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Login from './Login';
 import { useEffect, useState } from 'react';
 
 function App() {
@@ -25,10 +26,11 @@ function App() {
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/" element={<Card films={films} />} />
-        <Route path={`/detail/:filmId`} element={<Detail films={films} />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Card films={films} />} />
+          <Route path={`/detail/:filmId`} element={<Detail films={films} />} />
+          <Route path={`/login`} element={<Login />} />
+        </Routes>
       <Footer />
     </Router>
   );

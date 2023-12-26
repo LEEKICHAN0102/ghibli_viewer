@@ -7,7 +7,9 @@ export default function Header() {
       <Link to="/">
         <Logo src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Studio_Ghibli_logo.svg/300px-Studio_Ghibli_logo.svg.png" alt="main_logo"/>
       </Link>
-      <Login>Login</Login>
+      <Link to="/login">
+        <Login>Login</Login>
+      </Link>
     </Head>
   )
 }

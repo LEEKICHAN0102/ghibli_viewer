@@ -41,7 +41,7 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-.active_link {
+a {
 	text-decoration: none;
 	color: white
 }

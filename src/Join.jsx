@@ -1,8 +1,7 @@
 import { useForm } from "react-hook-form"
 import styled from "styled-components"
-import { Link } from "react-router-dom"
 
-export default async function Login() {
+export default function Join() {
   const {
     register,
     handleSubmit,
@@ -12,27 +11,25 @@ export default async function Login() {
   const onSubmit = (data) => console.log(data)
 
   return (
-    <LogInContainer>
-      <LoginForm onSubmit={handleSubmit(onSubmit)}>
-        <InputField placeholder="ID" {...register("example")} />
-        <InputField placeholder="Password" type="password" {...register("password")} />
-        <SubmitButton type="submit">로그인</SubmitButton>
-      </LoginForm>
-      <Link to="/join">
-        <CreateAccount>아직 계정이 없으신가요?</CreateAccount>
-      </Link>
-    </LogInContainer>
+    <JoinContainer>
+      <JoinForm onSubmit={handleSubmit(onSubmit)}>
+        <InputField placeholder="아이디" {...register("example")} />
+        <InputField placeholder="비밀번호" type="password" {...register("password")} />
+        <InputField placeholder="비밀번호 재확인" type="password" {...register("password")} />
+        <SubmitButton type="submit">회원 가입</SubmitButton>
+      </JoinForm>
+    </JoinContainer>
   )
 }
 
-const LogInContainer = styled.div`
+const JoinContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 90vh;
 `;
 
-const LoginForm = styled.form`
+const JoinForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,13 +61,4 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #0d85cc;
   }
-`;
-
-const CreateAccount = styled.div`
-  margin-top: 30px;
-  color:#109ceb;
-  &:hover {
-    background-color: #0d85cc;
-  }
-  font-size: 16px;
 `;
