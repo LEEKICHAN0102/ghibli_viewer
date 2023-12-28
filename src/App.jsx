@@ -5,6 +5,7 @@ import Detail from './components/Detail';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from './Login';
+import Join from './Join';
 import { useEffect, useState } from 'react';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Card films={films} />} />
           <Route path={`/detail/:filmId`} element={<Detail films={films} />} />
           <Route path={`/login`} element={<Login />} />
+          <Route path={`/join`} element={<Join />} />
         </Routes>
       <Footer />
     </Router>

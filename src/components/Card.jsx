@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-export default function Card({films}){
+export default  function Card({films}){
   return (
       <GhibliCard>
         {films.map((film) => (

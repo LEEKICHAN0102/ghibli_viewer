@@ -1,15 +1,26 @@
 import { useForm } from "react-hook-form"
+import axios from "axios"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
-export default async function Login() {
-  const {
+export default  function Login() {
+    const navigate = useNavigate();
+
+    const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = useForm()
 
-  const onSubmit = (data) => console.log(data)
+  const onSubmit = async(data, e) => {
+    e.preventDefault();
+
+    const response = await axios.get(`http://localhost:3001/join`, data);
+    if (response.status === 200) {
+      navigate("/login");
+    }
+  }
 
   return (
     <LogInContainer>
