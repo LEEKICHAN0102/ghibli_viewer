@@ -10,12 +10,12 @@ export default function Join() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm()
+  } = useForm({mode: "onChange"})
 
   const onSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:3001/join`, data);
+      const response = await axios.post(`http://localhost:8080/join`, data);
       console.log("서버 응답:", response.data);
       if (response.status === 200) {
         navigate("/login");
@@ -32,6 +32,7 @@ export default function Join() {
       <JoinForm onSubmit={handleSubmit(onSubmit)}>
         <InputField
           placeholder="닉네임"
+          iserror={errors.username}
           {...register(
             "username",
             {required: "사용할 유저명을 입력해주세요"}
@@ -44,7 +45,8 @@ export default function Join() {
         )}
         <InputField
           placeholder="이메일"
-          type="email" 
+          type="email"
+          iserror={errors.email}
           {...register(
             "email",
             {
@@ -62,6 +64,7 @@ export default function Join() {
         <InputField
           placeholder="비밀번호"
           type="password"
+          iserror={errors.password}
           {...register(
             "password",
             {
@@ -80,6 +83,7 @@ export default function Join() {
         <InputField
           placeholder="비밀번호 재확인"
           type="password"
+          iserror={errors.password_confirm}
           {...register(
             "password_confirm",
             {
@@ -114,7 +118,7 @@ const JoinForm = styled.form`
 const InputField = styled.input`
   margin-bottom: 10px;
   padding: 12px;
-  border: 1px solid;
+  border: 1px solid ${props => (props.iserror ? "red" : "gray")};
   border-radius: 20px;
   width: 450px;
   height: 20px;

@@ -1,15 +1,26 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Header() {
+
   return(
     <Head>
       <Link to="/">
         <Logo src="https://upload.wikimedia.org/wikipedia/en/thumb/c/ca/Studio_Ghibli_logo.svg/300px-Studio_Ghibli_logo.svg.png" alt="main_logo"/>
       </Link>
-      <Link to="/login">
-        <Login>Login</Login>
-      </Link>
+      {/* {isLoggedIn ? ( */}
+        <>
+          <Link to="/logout">
+            <HeadBtn>Logout</HeadBtn>
+          </Link>
+        </>
+      {/* ) : ( */}
+        <Link to="/login">
+          <HeadBtn>Login</HeadBtn>
+        </Link>
+      {/* )} */}
     </Head>
   )
 }
@@ -32,7 +43,7 @@ const Logo = styled.img`
   height: 100px;
 `;
 
-const Login = styled.div`
+const HeadBtn = styled.div`
   width: 70px;
   height: 40px;
   background-color: gray;

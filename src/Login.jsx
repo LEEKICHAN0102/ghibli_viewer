@@ -3,35 +3,61 @@ import axios from "axios"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 
-export default  function Login() {
-    const navigate = useNavigate();
+export default function Login() {
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
-    const {
-    register,
-    handleSubmit,
-    formState: { errors },
+  const {
+  register,
+  handleSubmit,
+  formState: { errors },
   } = useForm()
+
+  const handleLogIn = async() => {
+    const response = await axios.get(`http://localhost:8080/user` , {withCredentials:true});
+    setUser(response.data.user);
+  }
 
   const onSubmit = async(data, e) => {
     e.preventDefault();
-
-    const response = await axios.get(`http://localhost:3001/join`, data);
-    if (response.status === 200) {
-      navigate("/login");
+    try {
+      const response = await axios.post(`http://localhost:8080/login`, data);
+      console.log("서버 응답:", response.data);
+      if (response.status === 200) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("에러 발생:", error);
     }
   }
+  console.log(user);
 
   return (
     <LogInContainer>
       <LoginForm onSubmit={handleSubmit(onSubmit)}>
-        <InputField placeholder="ID" {...register("example")} />
-        <InputField placeholder="Password" type="password" {...register("password")} />
+        <InputField 
+          placeholder="email"
+          type="email"
+          {...register("email", {required: "가입하지 않은 E-mail 입니다."})}
+        />
+        {errors.email && (
+          <ErrorMessage>{errors.email.message}</ErrorMessage>
+        )}
+        <InputField 
+          placeholder="Password"
+          type="password"
+          {...register("password", {required: "비밀번호가 일치하지 않습니다."})}
+        />
+        {errors.password && (
+          <ErrorMessage>{errors.password.message}</ErrorMessage>
+        )}
         <SubmitButton type="submit">로그인</SubmitButton>
+        <Link to="/join">
+          <CreateAccount>아직 계정이 없으신가요?</CreateAccount>
+        </Link>
       </LoginForm>
-      <Link to="/join">
-        <CreateAccount>아직 계정이 없으신가요?</CreateAccount>
-      </Link>
     </LogInContainer>
   )
 }
@@ -47,7 +73,7 @@ const LoginForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 10px;
 `;
 
 const InputField = styled.input`
@@ -56,7 +82,7 @@ const InputField = styled.input`
   border: 1px solid #ccc;
   border-radius: 20px;
   width: 450px;
-  height: 50px;
+  height: 20px;
   font-size: 24px;
   outline: none;
 `;
@@ -79,9 +105,14 @@ const SubmitButton = styled.button`
 
 const CreateAccount = styled.div`
   margin-top: 30px;
-  color:#109ceb;
+  color: gray;
   &:hover {
-    background-color: #0d85cc;
+    color: #0d85cc;
   }
   font-size: 16px;
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 12px;
 `;
