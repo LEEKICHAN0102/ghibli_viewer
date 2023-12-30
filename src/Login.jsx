@@ -3,10 +3,8 @@ import axios from "axios"
 import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
 
-export default function Login() {
-  const [user, setUser] = useState({});
+export default function Login({ setUserData }) {
   const navigate = useNavigate();
 
   const {
@@ -15,24 +13,21 @@ export default function Login() {
   formState: { errors },
   } = useForm()
 
-  const handleLogIn = async() => {
-    const response = await axios.get(`http://localhost:8080/user` , {withCredentials:true});
-    setUser(response.data.user);
-  }
-
   const onSubmit = async(data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/login`, data);
+      const response = await axios.post(`http://localhost:8080/login`, data );
       console.log("서버 응답:", response.data);
       if (response.status === 200) {
+        // 로그인 성공 후 세션 정보 가져오기
+        const sessionResponse = await axios.get("http://localhost:8080/user", { withCredentials: true });
+        setUserData(sessionResponse.data.user);
         navigate("/");
       }
     } catch (error) {
       console.error("에러 발생:", error);
     }
   }
-  console.log(user);
 
   return (
     <LogInContainer>

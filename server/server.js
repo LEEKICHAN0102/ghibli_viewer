@@ -21,8 +21,8 @@ app.use(bodyParser.json());
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: false, // HTTPS에서만 쿠키 전송
@@ -44,7 +44,7 @@ db.once("open", function () {
   console.log("DB 연결 성공");
 });
 
-const User = mongoose.model("User", { 
+export const User = mongoose.model("User", { 
   username: String,
   email: String,
   password: String,
@@ -71,7 +71,7 @@ app.post('/login', async(req, res) => {
   const { email, password } = req.body;
   
   const user = await User.findOne({ email });
-  console.log(req.session);
+
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = user; // 세션에 사용자 정보 저장
     res.status(200).json({ message: '로그인 성공', user });

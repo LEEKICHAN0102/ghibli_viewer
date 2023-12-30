@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 
 function App() {
   const [films, setFilms] = useState([]);
+  const [userData, setUserData] = useState();
 
   useEffect(()=>{
     const fetchData = async () =>{
@@ -26,11 +27,11 @@ function App() {
 
   return (
     <Router>
-      <Header />
+      <Header userData={userData}/>
         <Routes>
           <Route path="/" element={<Card films={films} />} />
           <Route path={`/detail/:filmId`} element={<Detail films={films} />} />
-          <Route path={`/login`} element={<Login />} />
+          <Route path={`/login`} element={<Login setUserData={setUserData} />} />
           <Route path={`/join`} element={<Join />} />
         </Routes>
       <Footer />
