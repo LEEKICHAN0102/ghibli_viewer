@@ -16,11 +16,12 @@ export default function Login({ setUserData }) {
   const onSubmit = async(data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/login`, data );
+      const response = await axios.post(`http://localhost:8080/login`, data, { withCredentials: true });
       console.log("서버 응답:", response.data);
       if (response.status === 200) {
         // 로그인 성공 후 세션 정보 가져오기
         const sessionResponse = await axios.get("http://localhost:8080/user", { withCredentials: true });
+        console.log("세션 응답:", sessionResponse.data);
         setUserData(sessionResponse.data.user);
         navigate("/");
       }

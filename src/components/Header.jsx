@@ -1,20 +1,8 @@
 // import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
-export default function Header({userData}) {
-  const handleLogout = async()=>{
-    try{
-      const response = await axios.post("http://localhost:8080/logout");
-      if(response.status === 200){
-        console.log("로그아웃 성공")
-      } 
-    }catch(error) {
-      console.error("로그아웃 실패" , error)
-    }
-  }
-
+export default function Header({userData, handleLogout}) {
   return(
     <Head>
       <Link to="/">
@@ -23,7 +11,7 @@ export default function Header({userData}) {
       {userData ? (
         <>
           <Name>반가워요 {userData.username} 님</Name>
-          <Link to="/logout">
+          <Link to="/">
             <HeadBtn onClick={handleLogout}>Logout</HeadBtn>
           </Link>
         </>

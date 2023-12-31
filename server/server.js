@@ -12,17 +12,18 @@ dotenv.config();
 const PORT = process.env.PORT; // 8080
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: false, // HTTPS에서만 쿠키 전송
@@ -59,7 +60,6 @@ app.get("/user", async (req, res) => {
   if (req.session && req.session.user) {
     // 세션에 사용자 정보가 있으면 반환
     const user = await req.session.user;
-    console.log(user);
     res.status(200).json({ user });
   } else {
     // 세션에 사용자 정보가 없으면 로그인되지 않은 상태
