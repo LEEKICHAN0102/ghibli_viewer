@@ -15,7 +15,7 @@ export default function Join() {
   const onSubmit = async (data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/join`, data);
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/join`, data);
       console.log("서버 응답:", response.data);
       if (response.status === 200) {
         navigate("/login");

@@ -20,12 +20,12 @@ function App() {
         setFilms(result);
 
         // 세션 정보 받아오기
-        const sessionResponse = await axios.get("http://localhost:8080/user", { withCredentials: true });
+        const sessionResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}/user`, { withCredentials: true });
         setUserData(sessionResponse.data.user);
 
         console.log(result);
       } catch (error) {
-        console.error("Error Fetching films api", error);
+        console.error("로그인 하쇼", error);
       }
     };
 
@@ -51,7 +51,7 @@ function App() {
       <Header userData={userData} handleLogout={handleLogout} />
         <Routes>
           <Route path="/" element={<Card films={films} />} />
-          <Route path={`/detail/:filmId`} element={<Detail films={films} />} />
+          <Route path={`/detail/:filmId`} element={<Detail films={films} userData={userData} />} />
           <Route path={`/login`} element={<Login setUserData={setUserData} />} />
           <Route path={`/join`} element={<Join />} />
         </Routes>

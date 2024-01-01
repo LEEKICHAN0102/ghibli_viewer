@@ -11,16 +11,16 @@ export default function Login({ setUserData }) {
   register,
   handleSubmit,
   formState: { errors },
-  } = useForm()
+  } = useForm({mode:"onSubmit"})
 
   const onSubmit = async(data, e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/login`, data, { withCredentials: true });
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/login`, data, { withCredentials: true });
       console.log("서버 응답:", response.data);
       if (response.status === 200) {
         // 로그인 성공 후 세션 정보 가져오기
-        const sessionResponse = await axios.get("http://localhost:8080/user", { withCredentials: true });
+        const sessionResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}/user`, { withCredentials: true });
         console.log("세션 응답:", sessionResponse.data);
         setUserData(sessionResponse.data.user);
         navigate("/");
@@ -36,7 +36,7 @@ export default function Login({ setUserData }) {
         <InputField 
           placeholder="email"
           type="email"
-          {...register("email", {required: "가입하지 않은 E-mail 입니다."})}
+          {...register("email", {required: "E-mail을 작성해주세요"})}
         />
         {errors.email && (
           <ErrorMessage>{errors.email.message}</ErrorMessage>
@@ -44,7 +44,7 @@ export default function Login({ setUserData }) {
         <InputField 
           placeholder="Password"
           type="password"
-          {...register("password", {required: "비밀번호가 일치하지 않습니다."})}
+          {...register("password", {required: "비밀번호를 작성해주세요."})}
         />
         {errors.password && (
           <ErrorMessage>{errors.password.message}</ErrorMessage>
