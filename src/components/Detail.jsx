@@ -38,6 +38,15 @@ export default function Detail({films}){
     }
   }
 
+  const handleCommentDelete = async (commentId) =>{
+    try{
+      const comment = await axios.post(`${process.env.REACT_APP_BASE_URL}/comment/${filmId}/delete`, { commentId }, { withCredentials:true });
+      console.log("삭제 댓글:", comment);
+    } catch( error) {
+      console.error("버그:", error);
+    }
+  }
+
   return(
     <>
       {matchFilm && (
@@ -68,7 +77,10 @@ export default function Detail({films}){
         </CommentForm>
         {comments.length > 0 ? (
           comments.map((comment, index) => (
-            <UserComment key={index}>{comment.username}: {comment.content}</UserComment>
+            <Content key={index}>
+              <UserComment>{comment.username}: {comment.content}</UserComment>
+              <DeleteComment onClick={() => handleCommentDelete(comment.contentId)}>삭제</DeleteComment>
+              </Content>
           ))
         ) : (
           <p>아직 아무도 감상평을 남기지 않았습니다.</p>
@@ -160,7 +172,20 @@ const UserComment = styled.div`
   outline: none;
 `;
 
+const Content = styled.span`
+  color: black;
+  font-size: 24px;
+`;
+
 const ErrorMessage = styled.p`
   color: red;
   font-size: 12px;
+`;
+
+const DeleteComment = styled.button`
+  color: white;
+  background-color: #f04646;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
 `;

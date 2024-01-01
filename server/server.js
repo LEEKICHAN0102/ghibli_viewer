@@ -132,6 +132,7 @@ app.get("/comment/:filmId", async (req, res) => {
     const comments = await Comment.find({ filmId }).populate('userId', 'username');
     // 해당 filmId에 대한 모든 댓글을 가져옵니다.
     const commentData = comments.map(comment => ({
+      contentId: comment._id,
       content: comment.content,
       username: comment.userId.username,
     }));
@@ -164,5 +165,21 @@ app.post("/comment/:filmId", async (req, res) => {
   } catch (error) {
     console.error("Error while saving comment:", error);
     res.status(500).json({ message: '서버 오류로 댓글을 저장하지 못했습니다.' });
+  }
+});
+
+app.post("/comment/:filmId/delete", async (req, res) => {
+  const { filmId } =req.params;
+  const { commentId } = req.body;
+  console.log(commentId);
+  console.log(filmId);
+
+  try {
+    // 댓글 ID를 사용하여 삭제
+    await Comment.findByIdAndDelete(commentId);
+    res.status(200).json({ message: "댓글 삭제 성공" });
+  } catch (error) {
+    console.error("에러 발생:", error);
+    res.status(500).json({ message: '댓글 삭제 실패' });
   }
 });
