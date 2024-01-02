@@ -45,7 +45,7 @@ db.once("open", function () {
   console.log("DB 연결 성공");
 });
 
-export const User = mongoose.model("User", { 
+const userSchema = new mongoose.Schema({ 
   username: String,
   email: String,
   password: String,
@@ -61,7 +61,18 @@ const commentSchema = new mongoose.Schema({
   filmId: String,
 });
 
+const replySchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // User 모델과 연결
+  },
+  content: String,
+  commentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', required: true },
+});
+
+export const User = mongoose.model("User", userSchema);
 export const Comment = mongoose.model("Comment", commentSchema);
+export const Reply = mongoose.model("Reply", replySchema);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -1,38 +1,44 @@
-import { useParams } from "react-router-dom"
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import Comment from "./Comment";
 
-export default function Detail({films}){
+export default function Detail({films, userData}){
   const {filmId} = useParams();
   const matchFilm = films.find((film) => film.id === filmId);
-
   const [comments, setComments] = useState([]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
+  const [matchUser, setMatchUser] = useState(false);
+  const [reply , setReply] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userComment = await axios.get(`${process.env.REACT_APP_BASE_URL}/comment/${filmId}`, { withCredentials: true });
-        console.log(userComment);
-        setComments(userComment.data);
-      } catch (error) {
-        console.error("에러 발생:", error);
-      }
-    };
     fetchData();
-  }, []);
+  },[]);
+
+  console.log(userData);
+  console.log(comments);
+
+  const fetchData = async () => {
+    try {
+      const userComment = await axios.get(`${process.env.REACT_APP_BASE_URL}/comment/${filmId}`, { withCredentials: true });
+      console.log(userComment);
+      setComments(userComment.data);
+
+      const isMatch = userComment.data.some(
+        (comment) => comment.username === userData.username
+      );
+      setMatchUser(isMatch);
+
+    } catch (error) {
+      console.error("에러 발생:", error);
+    }
+  };
 
   const onSubmit = async (data) => {
     try{
       const comment = await axios.post(`${process.env.REACT_APP_BASE_URL}/comment/${filmId}`, data , { withCredentials:true });
       console.log("적은 내용:", comment.data);
+      fetchData();
     } catch( error) {
       console.error("버그:", error);
     }
@@ -41,10 +47,15 @@ export default function Detail({films}){
   const handleCommentDelete = async (commentId) =>{
     try{
       const comment = await axios.post(`${process.env.REACT_APP_BASE_URL}/comment/${filmId}/delete`, { commentId }, { withCredentials:true });
-      console.log("삭제 댓글:", comment);
+      console.log("삭제 댓글:", comment.data.commentId);
+      fetchData();
     } catch( error) {
       console.error("버그:", error);
     }
+  }
+
+  const handleReply = () => {
+    setReply(prev=> !prev);
   }
 
   return(
@@ -64,26 +75,32 @@ export default function Detail({films}){
         </BannerContainer>
       )}
       <CommentSection>
-        <CommentForm onSubmit={handleSubmit(onSubmit)}>
-          <InputField 
-            placeholder="로그인 후 감상평을 적어주세요"
-            type="text"
-            {...register("content", {required: "감상평을 남겨주세요."})}
-          />
-          {errors.email && (
-            <ErrorMessage>{errors.content.message}</ErrorMessage>
-          )}
-          <SubmitButton type="submit">감상평 남기기</SubmitButton>
-        </CommentForm>
+        <Comment 
+          placeholder={"로그인 후 감상평을 적어주세요"}
+          required={"감상평은 한글자 이상 남겨야합니다."}
+          text={"감상평 남기기"}
+          handler={onSubmit}
+        />
         {comments.length > 0 ? (
           comments.map((comment, index) => (
-            <Content key={index}>
-              <UserComment>{comment.username}: {comment.content}</UserComment>
-              <DeleteComment onClick={() => handleCommentDelete(comment.contentId)}>삭제</DeleteComment>
+            <>
+              <Content key={index}>
+                <UserComment>{comment.username}: {comment.content}</UserComment>
+                <ReplyComment onClick={handleReply}>답글</ReplyComment>
+                {matchUser ? <DeleteComment onClick={() => handleCommentDelete(comment.contentId)}>삭제</DeleteComment> : null}
               </Content>
+              {reply ? (
+              <Comment 
+                placeholder={"로그인 후 답글을 남겨주세요"}
+                required={"답글은 한글자 이상 남겨야합니다."}
+                text={"답글 남기기"}
+                handler={onSubmit}
+              />
+              ) : null}
+            </>
           ))
         ) : (
-          <p>아직 아무도 감상평을 남기지 않았습니다.</p>
+          <NoComment>아직 아무도 감상평을 남기지 않았습니다.</NoComment>
         )}
       </CommentSection>
     </>
@@ -123,42 +140,8 @@ const MovieInfo = styled.div`
 
 
 const CommentSection = styled.div`
-  width: 500px;
-  height: auto 0%;
-`;
-
-const CommentForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-`;
-
-const InputField = styled.input`
-  margin-bottom: 10px;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  width: 450px;
-  height: 20px;
-  font-size: 24px;
-  outline: none;
-`;
-
-const SubmitButton = styled.button`
-  padding: 10px;
-  background-color: #109ceb;
-  color: white;
-  width: 470px;
-  height: 50px;
-  font-size: 24px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  outline: none;
-  &:hover {
-    background-color: #0d85cc;
-  }
+  max-width: auto;
+  height: auto;
 `;
 
 const UserComment = styled.div`
@@ -175,16 +158,37 @@ const UserComment = styled.div`
 const Content = styled.span`
   color: black;
   font-size: 24px;
-`;
-
-const ErrorMessage = styled.p`
-  color: red;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 `;
 
 const DeleteComment = styled.button`
   color: white;
   background-color: #f04646;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+`;
+
+const NoComment = styled.div`
+  margin-bottom: 10px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 20px;
+  font-size: 24px;
+  outline: none;
+`;
+
+const ReplyComment = styled.button`
+  color: black;
+  background-color: white;
   width: 100px;
   height: 30px;
   border-radius: 10px;
